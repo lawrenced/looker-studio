@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated SEO Report Dashboard</title>
+    <!-- Tailwind CSS for a modern, clean design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            background-image: radial-gradient(circle at 50% 10%, #dbeafe, #f3f4f6);
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 1280px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .link-effect {
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .link-effect:hover {
+            box-shadow: 0 0 0 2px #3b82f6;
+            transform: translateY(-2px);
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .metric-label {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+        .change-positive {
+            color: #10b981;
+        }
+        .change-negative {
+            color: #ef4444;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-green {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-yellow {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        /* Custom styles for in-table bar chart */
+        .bar-container {
+            position: relative;
+            height: 10px;
+            width: 100px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+        }
+        .bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #3b82f6;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <div class="container mx-auto">
+        <!-- Header & Filter Bar -->
+        <header class="mb-10 text-center md:text-left">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">Automated SEO Performance Report</h1>
+            <p class="text-lg text-gray-500">Monthly Snapshot: <span class="font-semibold text-gray-700">October 2024</span></p>
+            <div class="mt-4 flex flex-wrap gap-4 items-center">
+                <div class="relative w-40">
+                    <select class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                        <option>Date Range</option>
+                        <option>Last 30 Days</option>
+                        <option>Previous Quarter</option>
+                    </select>
+                </div>
+                <div class="relative w-40">
+                    <select class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                        <option>Country</option>
+                        <option>United States</option>
+                        <option>United Kingdom</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Executive Summary (Manually Updated via Google Sheet) -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Executive Summary</h2>
+            <div class="text-gray-600 space-y-4">
+                <p>This month saw a significant strategic shift in organic performance. While branded search traffic declined, non-branded, high-interest topics drove a solid increase in impressions and conversions. This indicates a growing relevance in more competitive search spaces and less reliance on brand awareness. Our backlink profile continues to grow, and our technical health remains strong. The primary focus for next month will be to address critical technical errors and further optimize content to capture the new non-branded traffic.</p>
+                <p class="text-sm font-semibold text-gray-500">This summary is designed to be a manually updated text field in Looker Studio, connected to a Google Sheet.</p>
+            </div>
+        </section>
+
+        <!-- Overall Performance Metrics (Current vs. Previous Month) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">1.2M</p>
+                <p class="metric-label">Total Impressions</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 12.5%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">45,123</p>
+                <p class="metric-label">Total Visits</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 8.1%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">4.8%</p>
+                <p class="metric-label">Engagement Rate</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-negative">▼ 0.2%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">2,110</p>
+                <p class="metric-label">Total Conversions</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 15.3%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Combined Impressions & Visits Chart (Year-over-Year) -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Impressions & Visits (Year-over-Year)</h2>
+            <div class="h-64 relative">
+                <!-- SVG line chart with fill for combined data -->
+                <svg class="w-full h-full" viewBox="0 0 600 256" preserveAspectRatio="none">
+                    <!-- Current Year Impressions -->
+                    <path d="M0,200 L100,180 L200,190 L300,150 L400,160 L500,120 L600,100 L600,256 L0,256 Z" fill="rgba(79,70,229,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#4f46e5" stroke-width="3" points="0,200 100,180 200,190 300,150 400,160 500,120 600,100" />
+                    <!-- Previous Year Impressions (Dashed) -->
+                    <path d="M0,220 L100,210 L200,200 L300,170 L400,180 L500,160 L600,140 L600,256 L0,256 Z" fill="rgba(165,180,252,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#a5b4fc" stroke-width="3" stroke-dasharray="5,5" points="0,220 100,210 200,200 300,170 400,180 500,160 600,140" />
+                    <!-- Current Year Visits -->
+                    <path d="M0,150 L100,140 L200,160 L300,120 L400,130 L500,100 L600,80 L600,256 L0,256 Z" fill="rgba(16,185,129,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#10b981" stroke-width="3" points="0,150 100,140 200,160 300,120 400,130 500,100 600,80" />
+                    <!-- Previous Year Visits (Dashed) -->
+                    <path d="M0,170 L100,160 L200,170 L300,130 L400,140 L500,110 L600,90 L600,256 L0,256 Z" fill="rgba(110,231,183,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#6ee7b7" stroke-width="3" stroke-dasharray="5,5" points="0,170 100,160 200,170 300,130 400,140 500,110 600,90" />
+                    <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#e5e7eb" stroke-width="1" rx="8" ry="8" />
+                </svg>
+                <!-- Legend for the combined chart -->
+                <div class="absolute bottom-4 left-4 text-xs flex flex-wrap gap-x-4 gap-y-2">
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-indigo-600 mr-1"></span>
+                        <span class="text-gray-600">Current Impressions</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-indigo-300 mr-1"></span>
+                        <span class="text-gray-600">Previous Impressions</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-emerald-600 mr-1"></span>
+                        <span class="text-gray-600">Current Visits</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-emerald-300 mr-1"></span>
+                        <span class="text-gray-600">Previous Visits</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Looker Studio-like "click to expand" instruction -->
+            <p class="text-sm text-center text-gray-400 mt-4">
+                <span class="font-semibold text-gray-600">Click to filter and drill down into monthly data.</span>
+            </p>
+        </section>
+
+        <!-- Top Performing Pages -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Top 5 Performing Pages</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page Title</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organic Visits</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Engagement Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">The Ultimate Guide to Digital Marketing</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12,500</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 80%;"></div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">210</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.1%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">SEO Report Templates for Agencies</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8,900</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 60%;"></div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">155</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4.8%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Competitor Analysis Tool Review</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6,100</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 40%;"></div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">110</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.5%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Ahrefs & Keyword Performance & Competitor Analysis -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Keyword Performance & Competitor Rankings</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keyword</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Your Position</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Competitor 1</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Competitor 2</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">KD</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Search Volume</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Current Traffic</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">"digital marketing"</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600">5</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">12</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">75</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">100K</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">3,400</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">"seo report template"</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">15</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600">8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">18</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">42</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">12K</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">550</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">"competitor analysis"</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600">7</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">10</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">6</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">68</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">25K</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">1,200</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-sm text-gray-500 mt-4">
+                <strong class="text-gray-800">Insight:</strong> We have strong rankings for key terms, outperforming Competitor 2 on several. However, Competitor 1 still has a lead on high-value keywords like "digital marketing," indicating a content or backlink gap.
+            </p>
+        </section>
+
+        <!-- Backlink Health & Trends -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">128</p>
+                <p class="metric-label">New Backlinks</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 45%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">15</p>
+                <p class="metric-label">Lost Backlinks</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-negative">▼ 5%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">18</p>
+                <p class="metric-label">Domain Rating (DR)</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-gray-600">Stable</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">250</p>
+                <p class="metric-label">Total Ref. Domains</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 19</span>
+                    <span class="text-gray-400 ml-2">new this month</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical & Content Audit Scores -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 link-effect">
+            <div class="card p-6 text-center">
+                <p class="metric-value text-gray-800">92%</p>
+                <p class="metric-label">Internal Links Score</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-green-600">Good</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="metric-value text-gray-800">42%</p>
+                <p class="metric-label">Content Score</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-red-600">Poor</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="metric-value text-gray-800">82%</p>
+                <p class="metric-label">Site Health Score</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-green-600">Good</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Issues Table -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Technical Issues Detected</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Error Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pages Affected</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Serve static assets with an efficient cache policy</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-red">Critical</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">All</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Eliminate render blocking resources</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-red">Critical</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">All</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Avoid enormous network payloads</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-red">Critical</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">URLs with duplicate page titles</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">High</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Audience Demographics -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Audience Demographics</h2>
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="w-full md:w-1/2 h-64 relative">
+                    <!-- SVG Pie Chart for User Age -->
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                        <!-- 25-34: 45% -->
+                        <path d="M50 50 L50 1 A49 49 0 0 1 73 95 Z" fill="#4f46e5" />
+                        <!-- 35-44: 30% -->
+                        <path d="M50 50 L73 95 A49 49 0 0 1 18 80 Z" fill="#3b82f6" />
+                        <!-- 18-24: 15% -->
+                        <path d="M50 50 L18 80 A49 49 0 0 1 10 50 Z" fill="#60a5fa" />
+                        <!-- 45-54: 10% -->
+                        <path d="M50 50 L10 50 A49 49 0 0 1 50 1 Z" fill="#93c5fd" />
+                    </svg>
+                </div>
+                <div class="w-full md:w-1/2 mt-4 md:mt-0 md:pl-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Users by Age</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li class="flex items-center"><span class="w-3 h-3 bg-indigo-600 rounded-full mr-2"></span>25-34: 45%</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>35-44: 30%</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-blue-400 rounded-full mr-2"></span>18-24: 15%</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-blue-300 rounded-full mr-2"></span>45-54: 10%</li>
+                    </ul>
+                    <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Users by Gender</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>Male: 55%</li>
+                        <li>Female: 45%</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Steps & Recommendations -->
+        <section class="card p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Next Steps & Recommendations</h2>
+            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                <li><strong class="font-semibold text-red-600">High-Priority Technical Fixes:</strong> Address the Critical and High-Severity errors identified in the technical audit, including "Serve static assets with an efficient cache policy" and "Eliminate render blocking resources."</li>
+                <li><strong class="font-semibold text-red-600">Content Quality Audit:</strong> Our content score is poor. We'll audit our top-performing pages to identify opportunities for updates, improved clarity, and better alignment with user intent.</li>
+                <li><strong class="font-semibold">Optimize High-Impact Keywords:</strong> Focus on improving the position of keywords where Competitor 1 has a clear lead by creating new content and building internal links.</li>
+                <li><strong class="font-semibold">Backlink Growth:</strong> Monitor the top new referring domains to identify patterns in link acquisition and replicate successful outreach strategies.</li>
+            </ul>
+        </section>
+
+    </div>
+
+</body>
+</html>
