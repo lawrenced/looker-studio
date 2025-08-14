@@ -165,6 +165,52 @@
             </div>
         </section>
 
+             <!-- Combined Impressions & Visits Chart (Year-over-Year) -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Impressions & Visits (Year-over-Year)</h2>
+            <div class="h-64 relative">
+                <!-- SVG line chart with fill for combined data -->
+                <svg class="w-full h-full" viewBox="0 0 600 256" preserveAspectRatio="none">
+                    <!-- Current Year Impressions -->
+                    <path d="M0,200 L100,180 L200,190 L300,150 L400,160 L500,120 L600,100 L600,256 L0,256 Z" fill="rgba(79,70,229,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#4f46e5" stroke-width="3" points="0,200 100,180 200,190 300,150 400,160 500,120 600,100" />
+                    <!-- Previous Year Impressions (Dashed) -->
+                    <path d="M0,220 L100,210 L200,200 L300,170 L400,180 L500,160 L600,140 L600,256 L0,256 Z" fill="rgba(165,180,252,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#a5b4fc" stroke-width="3" stroke-dasharray="5,5" points="0,220 100,210 200,200 300,170 400,180 500,160 600,140" />
+                    <!-- Current Year Visits -->
+                    <path d="M0,150 L100,140 L200,160 L300,120 L400,130 L500,100 L600,80 L600,256 L0,256 Z" fill="rgba(16,185,129,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#10b981" stroke-width="3" points="0,150 100,140 200,160 300,120 400,130 500,100 600,80" />
+                    <!-- Previous Year Visits (Dashed) -->
+                    <path d="M0,170 L100,160 L200,170 L300,130 L400,140 L500,110 L600,90 L600,256 L0,256 Z" fill="rgba(110,231,183,0.1)" stroke="none"/>
+                    <polyline fill="none" stroke="#6ee7b7" stroke-width="3" stroke-dasharray="5,5" points="0,170 100,160 200,170 300,130 400,140 500,110 600,90" />
+                    <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#e5e7eb" stroke-width="1" rx="8" ry="8" />
+                </svg>
+                <!-- Legend for the combined chart -->
+                <div class="absolute bottom-4 left-4 text-xs flex flex-wrap gap-x-4 gap-y-2">
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-indigo-600 mr-1"></span>
+                        <span class="text-gray-600">Current Impressions</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-indigo-300 mr-1"></span>
+                        <span class="text-gray-600">Previous Impressions</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-emerald-600 mr-1"></span>
+                        <span class="text-gray-600">Current Visits</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 h-0.5 bg-emerald-300 mr-1"></span>
+                        <span class="text-gray-600">Previous Visits</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Looker Studio-like "click to expand" instruction -->
+            <p class="text-sm text-center text-gray-400 mt-4">
+                <span class="font-semibold text-gray-600">Click to filter and drill down into monthly data.</span>
+            </p>
+        </section>
+
         <!-- Separate YOY Charts -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div class="card p-6 link-effect">
