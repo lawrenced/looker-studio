@@ -1,517 +1,558 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimplyHealth SEO Performance Report</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Automated SEO Report Dashboard</title>
+    <!-- Tailwind CSS for a modern, clean design -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
+            background-image: radial-gradient(circle at 50% 10%, #dbeafe, #f3f4f6);
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 1280px;
         }
         .card {
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
         }
-        .change-text-positive {
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .link-effect {
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .link-effect:hover {
+            box-shadow: 0 0 0 2px #3b82f6;
+            transform: translateY(-2px);
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .metric-label {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+        .change-positive {
             color: #10b981;
         }
-        .change-text-negative {
+        .change-negative {
             color: #ef4444;
         }
-        .text-gray-500 {
-          color: #6b7280;
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
-        .text-xl {
-          font-size: 1.25rem;
-          line-height: 1.75rem;
+        .status-green {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-yellow {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        /* Custom styles for in-table bar chart */
+        .bar-container {
+            position: relative;
+            height: 10px;
+            width: 100px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+        }
+        .bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #3b82f6;
+            border-radius: 9999px;
+        }
+        .pie-chart {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #10b981 0% 50%,
+                #facc15 50% 80%,
+                #ef4444 80% 100%
+            );
         }
     </style>
 </head>
-<body class="p-6 md:p-12 lg:p-16 text-gray-800">
+<body class="p-8">
 
-    <main class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
-            <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                <img src="https://i.imgur.com/S1bIq0l.png" alt="SimplyHealth Logo" class="h-12 w-auto">
-                <div>
-                    <h1 class="text-3xl font-bold">SEO Performance Report</h1>
-                    <p id="report-date" class="text-sm text-gray-500 mt-1"></p>
-                </div>
+    <div class="container mx-auto">
+        <!-- Header & Filter Bar -->
+        <header class="mb-10 text-center md:text-left">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center text-center">
+                <!-- Left-aligned Client Logo -->
+                <img src="0x0.png" alt="SimplyHealth Logo" class="mx-auto md:mx-0 h-10 mb-4 md:mb-0">
+                <!-- Right-aligned Agency Logo Placeholder -->
+                <img src="" alt="" class="mx-auto md:mx-0 h-10 mb-4 md:mb-0">
             </div>
-            <div class="card p-4">
-                <p id="executive-summary" class="text-gray-600 italic"></p>
+            <!-- Main Title below logos, left-aligned -->
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mt-6 mb-2"><b>Simplyhealth</b> SEO Performance Report</h1>
+            <p class="text-lg text-gray-500">Monthly Snapshot: <span class="font-semibold text-gray-700">August 2025</span></p>
+            <div class="mt-4 flex flex-wrap gap-4 items-center">
+                <div class="relative w-40">
+                    <select class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                        <option>Date Range</option>
+                        <option>Last 30 Days</option>
+                        <option>Previous Quarter</option>
+                    </select>
+                </div>
             </div>
         </header>
 
-        <!-- KPI Cards -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <!-- Total Visits -->
-            <div class="card p-6 flex flex-col items-start">
-                <span class="text-sm font-medium text-gray-500 mb-2">Total Visits</span>
-                <div class="flex items-end space-x-2">
-                    <p id="visits-value" class="text-4xl font-semibold"></p>
-                    <p id="visits-change" class="text-sm font-medium"></p>
+        <!-- Executive Summary (Manually Updated via Google Sheet) -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Executive Summary</h2>
+            <div class="text-gray-600 space-y-4">
+                <p>This month saw a significant strategic shift in organic performance. While branded search traffic declined, non-branded, high-interest topics drove a solid increase in impressions and conversions. This indicates a growing relevance in more competitive search spaces and less reliance on brand awareness. Our backlink profile continues to grow, and our technical health remains strong. The primary focus for next month will be to address critical technical errors and further optimize content to capture the new non-branded traffic.</p>
+                <p class="text-sm font-semibold text-gray-500">This summary is designed to be a manually updated text field in Looker Studio, connected to a Google Sheet.</p>
+            </div>
+        </section>
+
+              <!-- Overall Performance Metrics (Current vs. Previous Month) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">1.2M</p>
+                <p class="metric-label">Total Impressions</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 12.5%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
                 </div>
             </div>
-            <!-- Total Impressions -->
-            <div class="card p-6 flex flex-col items-start">
-                <span class="text-sm font-medium text-gray-500 mb-2">Total Impressions</span>
-                <div class="flex items-end space-x-2">
-                    <p id="impressions-value" class="text-4xl font-semibold"></p>
-                    <p id="impressions-change" class="text-sm font-medium"></p>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">45,123</p>
+                <p class="metric-label">Total Visits</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 8.1%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
                 </div>
             </div>
-            <!-- Total Conversions -->
-            <div class="card p-6 flex flex-col items-start">
-                <span class="text-sm font-medium text-gray-500 mb-2">Total Conversions</span>
-                <div class="flex items-end space-x-2">
-                    <p id="conversions-value" class="text-4xl font-semibold"></p>
-                    <p id="conversions-change" class="text-sm font-medium"></p>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">4.8%</p>
+                <p class="metric-label">CTR</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-negative">▼ 0.2%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
                 </div>
             </div>
-            <!-- Average CTR -->
-            <div class="card p-6 flex flex-col items-start">
-                <span class="text-sm font-medium text-gray-500 mb-2">Avg. CTR</span>
-                <div class="flex items-end space-x-2">
-                    <p id="ctr-value" class="text-4xl font-semibold"></p>
-                    <p id="ctr-change" class="text-sm font-medium"></p>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">2,110</p>
+                <p class="metric-label">Total Conversions</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 15.3%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
                 </div>
             </div>
         </section>
 
-        <!-- YOY Comparison and Backlinks -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-            <!-- YOY Chart -->
-            <div class="card p-6 lg:col-span-2">
-                <h2 class="text-xl font-semibold mb-4">Total Visits: YOY Comparison</h2>
-                <canvas id="yoyChart"></canvas>
-            </div>
-            <!-- Backlink KPI Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <!-- New Backlinks -->
-                <div class="card p-6">
-                    <span class="text-sm font-medium text-gray-500">New Backlinks</span>
-                    <p id="new-backlinks-value" class="text-3xl font-semibold mt-1"></p>
-                    <p id="new-backlinks-change" class="text-sm font-medium mt-1"></p>
-                </div>
-                <!-- Lost Backlinks -->
-                <div class="card p-6">
-                    <span class="text-sm font-medium text-gray-500">Lost Backlinks</span>
-                    <p id="lost-backlinks-value" class="text-3xl font-semibold mt-1"></p>
-                    <p id="lost-backlinks-change" class="text-sm font-medium mt-1"></p>
-                </div>
-                <!-- Domain Rating -->
-                <div class="card p-6">
-                    <span class="text-sm font-medium text-gray-500">Domain Rating</span>
-                    <p id="domain-rating-value" class="text-3xl font-semibold mt-1"></p>
-                    <p id="domain-rating-change" class="text-sm font-medium mt-1"></p>
-                </div>
-                <!-- Referring Domains -->
-                <div class="card p-6">
-                    <span class="text-sm font-medium text-gray-500">Referring Domains</span>
-                    <p id="referring-domains-value" class="text-3xl font-semibold mt-1"></p>
-                    <p id="referring-domains-change" class="text-sm font-medium mt-1"></p>
-                </div>
-            </div>
-        </section>
 
-        <!-- Top Performing Pages & Keyword Tracking -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-            <!-- Top Performing Pages -->
-            <div class="card p-6">
-                <h2 class="text-xl font-semibold mb-4">Top Performing Pages</h2>
-                <div class="flex mb-4">
-                    <button id="b2b-tab" class="px-4 py-2 mr-2 rounded-lg font-medium text-sm transition-colors duration-200 bg-gray-200 text-gray-800">SimplyHealth B2B</button>
-                    <button id="denplan-tab" class="px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 bg-white text-gray-500 border border-gray-300">Denplan</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Page Title</th>
-                                <th scope="col" class="px-6 py-3">Visits</th>
-                                <th scope="col" class="px-6 py-3">Conversions</th>
-                                <th scope="col" class="px-6 py-3">Conversion Rate</th>
-                                <th scope="col" class="px-6 py-3">Page Rank</th>
-                            </tr>
-                        </thead>
-                        <tbody id="top-pages-table">
-                            <!-- Data will be populated here by JavaScript -->
-                        </tbody>
-                    </table>
+
+        <!-- Separate YOY Charts -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="card p-6 link-effect">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Impressions (YOY)</h2>
+                <div class="h-64 relative">
+                    <!-- SVG Impressions Chart -->
+                    <svg class="w-full h-full" viewBox="0 0 600 256" preserveAspectRatio="none">
+                        <path d="M0,200 L100,180 L200,190 L300,150 L400,160 L500,120 L600,100 L600,256 L0,256 Z" fill="rgba(79,70,229,0.1)" stroke="none"/>
+                        <polyline fill="none" stroke="#4f46e5" stroke-width="3" points="0,200 100,180 200,190 300,150 400,160 500,120 600,100" />
+                        <path d="M0,220 L100,210 L200,200 L300,170 L400,180 L500,160 L600,140 L600,256 L0,256 Z" fill="rgba(165,180,252,0.1)" stroke="none"/>
+                        <polyline fill="none" stroke="#a5b4fc" stroke-width="3" stroke-dasharray="5,5" points="0,220 100,210 200,200 300,170 400,180 500,160 600,140" />
+                        <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#e5e7eb" stroke-width="1" rx="8" ry="8" />
+                    </svg>
                 </div>
             </div>
-            <!-- Keyword Performance -->
-            <div class="card p-6">
-                <h2 class="text-xl font-semibold mb-4">Keyword Performance</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Keyword</th>
-                                <th scope="col" class="px-6 py-3">Position</th>
-                                <th scope="col" class="px-6 py-3">Search Vol.</th>
-                                <th scope="col" class="px-6 py-3">Traffic</th>
-                            </tr>
-                        </thead>
-                        <tbody id="keyword-table">
-                            <!-- Data will be populated here by JavaScript -->
-                        </tbody>
-                    </table>
+            <div class="card p-6 link-effect">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Visits (YOY)</h2>
+                <div class="h-64 relative">
+                    <!-- SVG Visits Chart -->
+                    <svg class="w-full h-full" viewBox="0 0 600 256" preserveAspectRatio="none">
+                        <path d="M0,150 L100,140 L200,160 L300,120 L400,130 500,100 L600,80 L600,256 L0,256 Z" fill="rgba(16,185,129,0.1)" stroke="none"/>
+                        <polyline fill="none" stroke="#10b981" stroke-width="3" points="0,150 100,140 200,160 300,120 400,130 500,100 600,80" />
+                        <path d="M0,170 L100,160 L200,170 L300,130 L400,140 L500,110 L600,90 L600,256 L0,256 Z" fill="rgba(110,231,183,0.1)" stroke="none"/>
+                        <polyline fill="none" stroke="#6ee7b7" stroke-width="3" stroke-dasharray="5,5" points="0,170 100,160 200,170 300,130 400,140 500,110 600,90" />
+                        <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#e5e7eb" stroke-width="1" rx="8" ry="8" />
+                    </svg>
                 </div>
-                <div class="mt-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
-                    <h3 class="font-semibold text-gray-800">Insight:</h3>
-                    <p id="keyword-insight" class="mt-2"></p>
+            </div>
+            <div class="card p-6 link-effect">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Conversions (YOY)</h2>
+                <div class="h-64 relative">
+                    <!-- SVG Conversions Chart -->
+                    <svg class="w-full h-full" viewBox="0 0 600 256" preserveAspectRatio="none">
+                        <!-- Current Year Conversions -->
+                        <path d="M0,180 L100,170 L200,160 L300,140 L400,150 L500,110 L600,90 L600,256 L0,256 Z" fill="rgba(124,58,237,0.1)" stroke="none"/>
+                        <polyline fill="none" stroke="#7c3aed" stroke-width="3" points="0,180 100,170 200,160 300,140 400,150 500,110 600,90" />
+                        <!-- Previous Year Conversions (Dashed) -->
+                        <path d="M0,200 L100,190 L200,180 L300,160 L400,170 L500,130 L600,110 L600,256 L0,256 Z" fill="rgba(167,139,250,0.1)" stroke="none"/>
+                        <polyline fill="none" stroke="#a78bfa" stroke-width="3" stroke-dasharray="5,5" points="0,200 100,190 200,180 300,160 400,170 500,130 600,110" />
+                        <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#e5e7eb" stroke-width="1" rx="8" ry="8" />
+                    </svg>
                 </div>
             </div>
         </section>
 
-        <!-- Technical SEO & Next Steps -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-            <!-- Technical Issues -->
-            <div class="card p-6">
-                <h2 class="text-xl font-semibold mb-4">Technical Issues</h2>
-                <div class="flex mb-4">
-                    <button id="issues-open-tab" class="px-4 py-2 mr-2 rounded-lg font-medium text-sm transition-colors duration-200 bg-gray-200 text-gray-800">Detected Issues</button>
-                    <button id="issues-fixed-tab" class="px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 bg-white text-gray-500 border border-gray-300">Fixed Issues</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr id="technical-issues-header">
-                                <!-- Headers will be populated by JavaScript -->
-                            </tr>
-                        </thead>
-                        <tbody id="technical-issues-table">
-                            <!-- Data will be populated here by JavaScript -->
-                        </tbody>
-                    </table>
+        <!-- Top Performing Pages -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Top Performing Pages - Simplyhealth Business</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page Rank</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page Title</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organic Visits (Change)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions (Change)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversion Rate (Change)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                <span class="change-positive font-bold">1 (+1)</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">The Ultimate Guide to Digital Marketing</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">12,500 <span class="change-positive">(+15%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">210 <span class="change-positive">(+10%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.1% <span class="change-positive">(+0.5%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                <span class="change-negative font-bold">2 (-2)</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">SEO Report Templates for Agencies</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8,900 <span class="change-negative">(-2%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">155 <span class="change-negative">(-1%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4.8% <span class="change-negative">(-0.3%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                <span class="change-positive font-bold">3 (+3)</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Competitor Analysis Tool Review</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6,100 <span class="change-positive">(+8%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">110 <span class="change-positive">(+2%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.5% <span class="change-positive">(+0.1%)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Dental Plan Pages -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Top Performing Pages - Denplan</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page Rank</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page Title</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organic Visits (Change)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversions (Change)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conversion Rate (Change)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                <span class="change-positive font-bold">1 (+2)</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Insurance for Dentists: Your Guide</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4,200 <span class="change-positive">(+22%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">120 <span class="change-positive">(+15%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2.8% <span class="change-positive">(+0.4%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                <span class="change-positive font-bold">2 (+1)</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Finding the Best Dentist Insurance Plans</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3,100 <span class="change-positive">(+10%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">80 <span class="change-positive">(+5%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2.6% <span class="change-negative">(-0.1%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                <span class="change-negative font-bold">3 (-3)</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Top-Rated Corporate Dental Insurance</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2,500 <span class="change-positive">(+5%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">70 <span class="change-negative">(-3%)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2.8% <span class="change-positive">(+0.2%)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Ahrefs & Keyword Performance & Competitor Analysis -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Keyword Performance & Competitor Rankings</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keyword</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Your Position (Change)</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Competitor 1 (Change)</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Competitor 2 (Change)</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">KD</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Search Volume</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Current Traffic (Change)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">"business healthcare"</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">8 <span class="change-positive">(+2)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600">5 <span class="change-positive">(+1)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">12 <span class="change-negative">(-2)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">75</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">100K</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">3,400 <span class="change-positive">(+3%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">"small business healthcare"</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">15 <span class="change-negative">(-1)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600">8 <span class="change-positive">(+3)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">18 <span class="change-negative">(-4)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">42</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">12K</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">550 <span class="change-negative">(-2%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">"corporate medical insurance"</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600">7 <span class="change-positive">(+5)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">10 <span class="change-negative">(-1)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">6 <span class="change-positive">(+2)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">68</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">25K</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">1,200 <span class="change-positive">(+8%)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">"business health cover"</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">11 <span class="change-negative">(-3)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-red-600">14 <span class="change-negative">(-5)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600">9 <span class="change-positive">(+4)</span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">55</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">15K</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">700 <span class="change-negative">(-1%)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-sm text-gray-500 mt-4">
+                <strong class="text-gray-800">Insight:</strong> We have strong rankings for key terms, outperforming Competitor 2 on several. However, Competitor 1 still has a lead on high-value keywords like "insurance cover for business," indicating a content or backlink gap.
+            </p>
+        </section>
+
+        <!-- Backlink Health & Trends -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">128</p>
+                <p class="metric-label">New Backlinks</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 45%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
                 </div>
             </div>
-            <!-- Recommendations -->
-            <div class="card p-6 flex flex-col justify-between">
-                <div>
-                    <h2 class="text-xl font-semibold mb-4">Next Steps & Recommendations</h2>
-                    <div class="prose max-w-none text-gray-600">
-                        <p id="recommendations-text"></p>
-                    </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">15</p>
+                <p class="metric-label">Lost Backlinks</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-negative">▼ 5%</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
                 </div>
-                <div class="mt-6 flex flex-wrap gap-4">
-                    <button class="px-6 py-3 rounded-lg font-bold text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200">Download Full Report</button>
-                    <button class="px-6 py-3 rounded-lg font-bold text-sm bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors duration-200">Schedule Follow-up</button>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">18</p>
+                <p class="metric-label">Domain Rating (DR)</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-gray-600">Stable</span>
+                    <span class="text-gray-400 ml-2">vs. previous month</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">250</p>
+                <p class="metric-label">Total Ref. Domains</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium change-positive">▲ 19</span>
+                    <span class="text-gray-400 ml-2">new this month</span>
                 </div>
             </div>
         </section>
-    </main>
 
-    <script>
-        const mockDatabase = {
-            reportDate: 'December 2024',
-            executiveSummary: 'Traffic growth due to seasonal campaign',
-            recommendations: 'Increase content output',
-            metrics: {
-                impressions: { value: 135835, change: '48208', isPositive: true },
-                visits: { value: 11445, change: '111', isPositive: false },
-                conversions: { value: 452, change: '172', isPositive: false },
-                ctr: { value: '4.64%', change: '1.53%', isPositive: true }
-            },
-            yoyChartData: {
-                labels: ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                currentYear: [12000, 15000, 13000, 16000, 14000, 15500, 35762, 10424, 32856, 11445],
-                lastYear: [8000, 9500, 11000, 10500, 12000, 13000, 27208, 37177, 39909, 39778]
-            },
-            backlinks: {
-                newBacklinks: { value: 32, change: '-10', isPositive: false },
-                lostBacklinks: { value: 9, change: '-7', isPositive: false },
-                domainRating: { value: 76, change: '-46', isPositive: false },
-                referringDomains: { value: 350, change: '-46', isPositive: false }
-            },
-            topPages: {
-                b2b: [
-                    { title: "Landing Page 1", visits: "1,861", visitsChange: "-116", visitsPositive: false, conversions: 57, conversionsChange: "-18", conversionsPositive: false, cr: "3.33%", pageDiff: "-5", isPositive: false },
-                    { title: "Landing Page 2", visits: "4,621", visitsChange: "-393", visitsPositive: false, conversions: 35, conversionsChange: "-5", conversionsPositive: false, cr: "2.69%", pageDiff: "1", isPositive: true },
-                    { title: "Landing Page 3", visits: "4,536", visitsChange: "-64", visitsPositive: false, conversions: 51, conversionsChange: "5", conversionsPositive: true, cr: "2.06%", pageDiff: "-3", isPositive: false },
-                    { title: "Landing Page 4", visits: "1,192", visitsChange: "289", visitsPositive: true, conversions: 167, conversionsChange: "12", conversionsPositive: true, cr: "3.97%", pageDiff: "-2", isPositive: false },
-                    { title: "Landing Page 5", visits: "574", visitsChange: "19", visitsPositive: true, conversions: 97, conversionsChange: "-11", conversionsPositive: false, cr: "3.69%", pageDiff: "0", isPositive: false },
-                    { title: "Landing Page 6", visits: "2,689", visitsChange: "290", visitsPositive: true, conversions: 18, conversionsChange: "-12", conversionsPositive: false, cr: "4.74%", pageDiff: "0", isPositive: false },
-                    { title: "Landing Page 7", visits: "3,756", visitsChange: "375", visitsPositive: true, conversions: 160, conversionsChange: "16", conversionsPositive: true, cr: "3.04%", pageDiff: "1", isPositive: true },
-                    { title: "Landing Page 8", visits: "544", visitsChange: "274", visitsPositive: true, conversions: 49, conversionsChange: "12", conversionsPositive: true, cr: "2.77%", pageDiff: "-4", isPositive: false },
-                    { title: "Landing Page 9", visits: "1,370", visitsChange: "90", visitsPositive: true, conversions: 87, conversionsChange: "-16", conversionsPositive: false, cr: "2.92%", pageDiff: "5", isPositive: true },
-                    { title: "Landing Page 10", visits: "4,749", visitsChange: "-109", visitsPositive: false, conversions: 105, conversionsChange: "4", conversionsPositive: true, cr: "3.74%", pageDiff: "2", isPositive: true }
-                ],
-                denplan: [
-                    { title: "Landing Page 1", visits: "4,218", visitsChange: "-283", visitsPositive: false, conversions: 177, conversionsChange: "-7", conversionsPositive: false, cr: "1.16%", pageDiff: "-2", isPositive: false },
-                    { title: "Landing Page 2", visits: "4,773", visitsChange: "-35", visitsPositive: false, conversions: 140, conversionsChange: "16", conversionsPositive: true, cr: "2.25%", pageDiff: "4", isPositive: true },
-                    { title: "Landing Page 3", visits: "1,654", visitsChange: "459", visitsPositive: true, conversions: 129, conversionsChange: "17", conversionsPositive: true, cr: "4.23%", pageDiff: "1", isPositive: true },
-                    { title: "Landing Page 4", visits: "1,632", visitsChange: "252", visitsPositive: true, conversions: 5, conversionsChange: "-14", conversionsPositive: false, cr: "1.24%", pageDiff: "5", isPositive: true },
-                    { title: "Landing Page 5", visits: "2,927", visitsChange: "83", visitsPositive: true, conversions: 138, conversionsChange: "-11", conversionsPositive: false, cr: "3.73%", pageDiff: "-4", isPositive: false },
-                    { title: "Landing Page 6", visits: "515", visitsChange: "330", visitsPositive: true, conversions: 178, conversionsChange: "-5", conversionsPositive: false, cr: "2.98%", pageDiff: "-1", isPositive: false },
-                    { title: "Landing Page 7", visits: "308", visitsChange: "245", visitsPositive: true, conversions: 97, conversionsChange: "-7", conversionsPositive: false, cr: "3.68%", pageDiff: "-1", isPositive: false },
-                    { title: "Landing Page 8", visits: "2,563", visitsChange: "87", visitsPositive: true, conversions: 124, conversionsChange: "11", conversionsPositive: true, cr: "1.61%", pageDiff: "-5", isPositive: false },
-                    { title: "Landing Page 9", visits: "230", visitsChange: "-390", visitsPositive: false, conversions: 92, conversionsChange: "19", conversionsPositive: true, cr: "2.31%", pageDiff: "4", isPositive: true },
-                    { title: "Landing Page 10", visits: "3,062", visitsChange: "-460", visitsPositive: false, conversions: 27, conversionsChange: "-14", conversionsPositive: false, cr: "2.92%", pageDiff: "3", isPositive: true }
-                ]
-            },
-            keywordData: [
-                { keyword: "Keyword 1", currentPosition: 81, positionChange: "1", isPositive: true, searchVolume: "3.0k", currentTraffic: "4.5k", trafficChange: "-141", trafficPositive: false, keywordInsight: "Improved positions for 10 target keywords" },
-                { keyword: "Keyword 2", currentPosition: 20, positionChange: "6", isPositive: true, searchVolume: "4.4k", currentTraffic: "3.2k", trafficChange: "-420", trafficPositive: false },
-                { keyword: "Keyword 3", currentPosition: 51, positionChange: "-3", isPositive: false, searchVolume: "2.8k", currentTraffic: "2.2k", trafficChange: "19", trafficPositive: true },
-                { keyword: "Keyword 4", currentPosition: 81, positionChange: "-2", isPositive: false, searchVolume: "4.7k", currentTraffic: "995", trafficChange: "241", trafficPositive: true },
-                { keyword: "Keyword 5", currentPosition: 17, positionChange: "-7", isPositive: false, searchVolume: "9.2k", currentTraffic: "226", trafficChange: "-325", trafficPositive: false },
-                { keyword: "Keyword 6", currentPosition: 28, positionChange: "-8", isPositive: false, searchVolume: "470", currentTraffic: "4.4k", trafficChange: "-256", trafficPositive: false },
-                { keyword: "Keyword 7", currentPosition: 85, positionChange: "-2", isPositive: false, searchVolume: "7.5k", currentTraffic: "2.7k", trafficChange: "-167", trafficPositive: false },
-                { keyword: "Keyword 8", currentPosition: 24, positionChange: "4", isPositive: true, searchVolume: "8.4k", currentTraffic: "3.3k", trafficChange: "37", trafficPositive: true },
-                { keyword: "Keyword 9", currentPosition: 14, positionChange: "3", isPositive: true, searchVolume: "6.2k", currentTraffic: "1.4k", trafficChange: "195", trafficPositive: true },
-                { keyword: "Keyword 10", currentPosition: 8, positionChange: "-3", isPositive: false, searchVolume: "4.4k", currentTraffic: "2.4k", trafficChange: "-40", trafficPositive: false },
-            ],
-            technicalIssues: {
-                detected: [
-                    { name: "Error type 1", severity: "Low", affectedPages: 40, status: "Resolved" },
-                    { name: "Error type 2", severity: "Medium", affectedPages: 29, status: "Resolved" },
-                    { name: "Error type 3", severity: "Low", affectedPages: 4, status: "Open" },
-                    { name: "Error type 4", severity: "Low", affectedPages: 46, status: "In Progress" },
-                    { name: "Error type 5", severity: "High", affectedPages: 1, status: "Resolved" }
-                ],
-                fixed: [
-                    { name: "Fixed error 1", severity: "Low", dateFixed: "2024-01-01" },
-                    { name: "Fixed error 2", severity: "High", dateFixed: "2024-01-31" },
-                    { name: "Fixed error 3", severity: "Low", dateFixed: "2024-03-01" },
-                    { name: "Fixed error 4", severity: "Low", dateFixed: "2024-03-31" },
-                    { name: "Fixed error 5", severity: "Low", dateFixed: "2024-04-30" }
-                ]
-            }
-        };
+        <!-- Technical & Content Audit Scores -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">92%</p>
+                <p class="metric-label">Internal Links Score</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-green-600">Good</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">42%</p>
+                <p class="metric-label">Content Score</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-red-600">Poor</span>
+                </div>
+            </div>
+            <div class="card p-6 text-center link-effect">
+                <p class="metric-value text-gray-800">82%</p>
+                <p class="metric-label">Site Health Score</p>
+                <div class="flex items-center justify-center text-sm mt-2">
+                    <span class="font-medium text-green-600">Good</span>
+                </div>
+            </div>
+        </section>
 
-        // --- Helper Functions for Formatting ---
-        function formatNumber(num) {
-            return new Intl.NumberFormat('en-US').format(num);
-        }
+                <!-- External Link Quality Score Pie Chart -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">External Link Quality Score</h2>
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="w-full md:w-1/2 h-64 relative flex justify-center items-center">
+                    <div class="pie-chart" style="width: 200px; height: 200px;"></div>
+                </div>
+                <div class="w-full md:w-1/2 mt-4 md:mt-0 md:pl-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Link Breakdown</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li class="flex items-center"><span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>Good: 50%</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>Ok: 30%</li>
+                        <li class="flex items-center"><span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>Poor: 20%</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-        function formatChange(change, isPositive) {
-            const prefix = isPositive ? '+' : '';
-            return `<span class="change-text-${isPositive ? 'positive' : 'negative'}">${prefix}${change}</span>`;
-        }
-        
-        // --- Data Population Functions ---
-        function populateHeader() {
-            document.getElementById('report-date').textContent = mockDatabase.reportDate;
-            document.getElementById('executive-summary').textContent = mockDatabase.executiveSummary;
-            document.getElementById('recommendations-text').textContent = mockDatabase.recommendations;
-        }
+        <!-- Technical Issues Table -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Technical Issues Detected</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Error Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pages Affected</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Serve static assets with an efficient cache policy</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-red">Critical</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">All</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Eliminate render blocking resources</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-red">Critical</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">All</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Avoid enormous network payloads</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-red">Critical</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">URLs with duplicate page titles</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">High</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">To Fix</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        function populateKpis() {
-            const metrics = mockDatabase.metrics;
-            document.getElementById('visits-value').textContent = formatNumber(metrics.visits.value);
-            document.getElementById('visits-change').innerHTML = formatChange(metrics.visits.change, metrics.visits.isPositive);
-            document.getElementById('impressions-value').textContent = formatNumber(metrics.impressions.value);
-            document.getElementById('impressions-change').innerHTML = formatChange(metrics.impressions.change, metrics.impressions.isPositive);
-            document.getElementById('conversions-value').textContent = formatNumber(metrics.conversions.value);
-            document.getElementById('conversions-change').innerHTML = formatChange(metrics.conversions.change, metrics.conversions.isPositive);
-            document.getElementById('ctr-value').textContent = metrics.ctr.value;
-            document.getElementById('ctr-change').innerHTML = formatChange(metrics.ctr.change, metrics.ctr.isPositive);
+        <!-- Technical Issues Fixed Table -->
+        <section class="card p-6 mb-8 link-effect">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Technical Issues Fixed</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Error Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Fixed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Broken internal links</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-red">High</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Oct 12, 2025</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Missing image alt text</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="status-badge status-yellow">Minor</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Oct 10, 2025</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            const backlinks = mockDatabase.backlinks;
-            document.getElementById('new-backlinks-value').textContent = formatNumber(backlinks.newBacklinks.value);
-            document.getElementById('new-backlinks-change').innerHTML = formatChange(backlinks.newBacklinks.change, backlinks.newBacklinks.isPositive) + ' MoM';
 
-            document.getElementById('lost-backlinks-value').textContent = formatNumber(backlinks.lostBacklinks.value);
-            document.getElementById('lost-backlinks-change').innerHTML = formatChange(backlinks.lostBacklinks.change, backlinks.lostBacklinks.isPositive) + ' MoM';
 
-            document.getElementById('domain-rating-value').textContent = backlinks.domainRating.value;
-            document.getElementById('domain-rating-change').innerHTML = formatChange(backlinks.domainRating.change, backlinks.domainRating.isPositive) + ' MoM';
+        <!-- Next Steps & Recommendations -->
+        <section class="card p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Next Steps & Recommendations</h2>
+            <ul class="list-disc list-inside text-gray-600 space-y-2">
+                <li><strong class="font-semibold text-red-600">High-Priority Technical Fixes:</strong> Address the Critical and High-Severity errors identified in the technical audit, including "Serve static assets with an efficient cache policy" and "Eliminate render blocking resources."</li>
+                <li><strong class="font-semibold text-red-600">Content Quality Audit:</strong> Our content score is poor. We'll audit our top-performing pages to identify opportunities for updates, improved clarity, and better alignment with user intent.</li>
+                <li><strong class="font-semibold">Optimize High-Impact Keywords:</strong> Focus on improving the position of keywords where Competitor 1 has a clear lead by creating new content and building internal links.</li>
+                <li><strong class="font-semibold">Backlink Growth:</strong> Monitor the top new referring domains to identify patterns in link acquisition and replicate successful outreach strategies.</li>
+            </ul>
+        </section>
 
-            document.getElementById('referring-domains-value').textContent = formatNumber(backlinks.referringDomains.value);
-            document.getElementById('referring-domains-change').innerHTML = formatChange(backlinks.referringDomains.change, backlinks.referringDomains.isPositive) + ' MoM';
-        }
+    </div>
 
-        function populateYoyChart() {
-            const ctx = document.getElementById('yoyChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: mockDatabase.yoyChartData.labels,
-                    datasets: [{
-                        label: 'Current Year Visits',
-                        data: mockDatabase.yoyChartData.currentYear,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: 'Last Year Visits',
-                        data: mockDatabase.yoyChartData.lastYear,
-                        borderColor: '#9ca3af',
-                        backgroundColor: 'rgba(156, 163, 175, 0.2)',
-                        fill: false,
-                        tension: 0.4,
-                        borderDash: [5, 5]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: '#e5e7eb'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function populateTopPages(data) {
-            const tableBody = document.getElementById('top-pages-table');
-            tableBody.innerHTML = '';
-            data.forEach(page => {
-                const row = document.createElement('tr');
-                row.className = 'bg-white border-b hover:bg-gray-50';
-                row.innerHTML = `
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${page.title}</th>
-                    <td class="px-6 py-4">${page.visits} <span class="text-xs font-medium ${page.visitsPositive ? 'change-text-positive' : 'change-text-negative'}">${page.visitsChange}</span></td>
-                    <td class="px-6 py-4">${page.conversions} <span class="text-xs font-medium ${page.conversionsPositive ? 'change-text-positive' : 'change-text-negative'}">${page.conversionsChange}</span></td>
-                    <td class="px-6 py-4">${page.cr}</td>
-                    <td class="px-6 py-4">${page.pageDiff}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        function populateKeywordTable() {
-            const tableBody = document.getElementById('keyword-table');
-            const keywordInsight = document.getElementById('keyword-insight');
-            tableBody.innerHTML = '';
-            mockDatabase.keywordData.forEach(item => {
-                const row = document.createElement('tr');
-                row.className = 'bg-white border-b hover:bg-gray-50';
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${item.keyword}</td>
-                    <td class="px-6 py-4">${item.currentPosition} <span class="text-xs font-medium ${item.isPositive ? 'change-text-positive' : 'change-text-negative'}">${item.positionChange}</span></td>
-                    <td class="px-6 py-4">${item.searchVolume}</td>
-                    <td class="px-6 py-4">${item.currentTraffic} <span class="text-xs font-medium ${item.trafficPositive ? 'change-text-positive' : 'change-text-negative'}">${item.trafficChange}</span></td>
-                `;
-                tableBody.appendChild(row);
-            });
-            keywordInsight.textContent = mockDatabase.keywordData[0].keywordInsight || '';
-        }
-
-        function populateTechnicalIssues(type) {
-            const tableBody = document.getElementById('technical-issues-table');
-            const tableHeader = document.getElementById('technical-issues-header');
-            tableBody.innerHTML = '';
-            tableHeader.innerHTML = '';
-
-            if (type === 'detected') {
-                tableHeader.innerHTML = `
-                    <th scope="col" class="px-6 py-3">Issue</th>
-                    <th scope="col" class="px-6 py-3">Severity</th>
-                    <th scope="col" class="px-6 py-3">Affected Pages</th>
-                    <th scope="col" class="px-6 py-3">Status</th>
-                `;
-                mockDatabase.technicalIssues.detected.forEach(issue => {
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap">${issue.name}</td>
-                        <td class="px-6 py-4">${issue.severity}</td>
-                        <td class="px-6 py-4">${issue.affectedPages}</td>
-                        <td class="px-6 py-4">${issue.status}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else if (type === 'fixed') {
-                tableHeader.innerHTML = `
-                    <th scope="col" class="px-6 py-3">Issue</th>
-                    <th scope="col" class="px-6 py-3">Severity</th>
-                    <th scope="col" class="px-6 py-3">Date Fixed</th>
-                `;
-                mockDatabase.technicalIssues.fixed.forEach(issue => {
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap">${issue.name}</td>
-                        <td class="px-6 py-4">${issue.severity}</td>
-                        <td class="px-6 py-4">${issue.dateFixed}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            }
-        }
-
-        // --- Event Listeners for Tabs ---
-        function setupTabListeners() {
-            const b2bTab = document.getElementById('b2b-tab');
-            const denplanTab = document.getElementById('denplan-tab');
-
-            b2bTab.addEventListener('click', () => {
-                populateTopPages(mockDatabase.topPages.b2b);
-                b2bTab.classList.add('bg-gray-200', 'text-gray-800');
-                b2bTab.classList.remove('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                denplanTab.classList.add('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                denplanTab.classList.remove('bg-gray-200', 'text-gray-800');
-            });
-
-            denplanTab.addEventListener('click', () => {
-                populateTopPages(mockDatabase.topPages.denplan);
-                denplanTab.classList.add('bg-gray-200', 'text-gray-800');
-                denplanTab.classList.remove('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                b2bTab.classList.add('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                b2bTab.classList.remove('bg-gray-200', 'text-gray-800');
-            });
-            
-            const issuesOpenTab = document.getElementById('issues-open-tab');
-            const issuesFixedTab = document.getElementById('issues-fixed-tab');
-
-            issuesOpenTab.addEventListener('click', () => {
-                populateTechnicalIssues('detected');
-                issuesOpenTab.classList.add('bg-gray-200', 'text-gray-800');
-                issuesOpenTab.classList.remove('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                issuesFixedTab.classList.add('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                issuesFixedTab.classList.remove('bg-gray-200', 'text-gray-800');
-            });
-
-            issuesFixedTab.addEventListener('click', () => {
-                populateTechnicalIssues('fixed');
-                issuesFixedTab.classList.add('bg-gray-200', 'text-gray-800');
-                issuesFixedTab.classList.remove('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                issuesOpenTab.classList.add('bg-white', 'text-gray-500', 'border', 'border-gray-300');
-                issuesOpenTab.classList.remove('bg-gray-200', 'text-gray-800');
-            });
-        }
-        
-        // --- Initialization on load ---
-        window.onload = function() {
-            populateHeader();
-            populateKpis();
-            populateYoyChart();
-            populateTopPages(mockDatabase.topPages.b2b); // Default to B2B
-            populateKeywordTable();
-            populateTechnicalIssues('detected'); // Default to Detected
-            setupTabListeners();
-        };
-    </script>
 </body>
 </html>
+ 
